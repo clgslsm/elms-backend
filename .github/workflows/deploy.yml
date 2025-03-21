@@ -1,0 +1,70 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -DskipTests
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: registry.digitalocean.com/${{ secrets.DO_REGISTRY_NAME }}/elms:${{ github.sha }}
+      
+      - name: Deploy to Digital Ocean Droplet
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            # Login to container registry
+            doctl registry login --expiry-seconds 3600
+            
+            # Pull latest image
+            docker pull registry.digitalocean.com/${{ secrets.DO_REGISTRY_NAME }}/elms:${{ github.sha }}
+            
+            # Stop and remove existing container
+            docker stop elms-app || true
+            docker rm elms-app || true
+            
+            # Run new container with environment variables
+            docker run -d --name elms-app -p 8080:8080 \
+              -e DB_URL='${{ secrets.DB_URL }}' \
+              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
+              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
+              -e JWT_EXPIRATION='${{ secrets.JWT_EXPIRATION }}' \
+              -e SHOW_SQL='false' \
+              -e PORT='8080' \
+              --restart unless-stopped \
+              registry.digitalocean.com/${{ secrets.DO_REGISTRY_NAME }}/elms:${{ github.sha }}
+            
+            # Clean up old images (keep only last 3)
+            docker image prune -a -f --filter "until=24h"
