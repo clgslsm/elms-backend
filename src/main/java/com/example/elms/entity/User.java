@@ -23,8 +23,8 @@ public class User {
     @Column(name = "full_name")
     private String fullName;
     
-    @Column(nullable = false)
-    private String role;
+    @Column(nullable = false, name = "id_role")
+    private Long idRole;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -84,12 +84,12 @@ public class User {
         this.fullName = fullName;
     }
     
-    public String getRole() {
-        return role;
+    public Long getRole() {
+        return idRole;
     }
     
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(Long idRole) {
+        this.idRole = idRole;
     }
     
     public LocalDateTime getCreatedAt() {

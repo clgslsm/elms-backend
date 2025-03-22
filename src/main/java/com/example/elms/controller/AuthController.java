@@ -59,7 +59,7 @@ public class AuthController {
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         user.setFullName(signupRequest.getFullName());
-        user.setRole("USER"); // Default role
+        user.setRole(1L); // Default role
         
         userRepository.save(user);
         
@@ -113,7 +113,8 @@ public class AuthController {
             user.getUsername(),
             user.getEmail(),
             user.getFullName(),
-            user.getRole(),
+//            user.getRole(),
+                "TESTING",
             user.getCreatedAt()
         );
         
