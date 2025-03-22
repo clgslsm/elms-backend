@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 
@@ -22,7 +24,9 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private Long expiration;
-    
+
+    private Set<String> invalidatedTokens = new HashSet<>();
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
@@ -43,6 +47,10 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, String username) {
+        // Check if the token is in the invalidated tokens set
+        if (invalidatedTokens.contains(token)) {
+            return false;
+        }
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
@@ -71,12 +79,16 @@ public class JwtUtil {
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-    
+
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public void invalidateToken(String token) {
+        invalidatedTokens.add(token);
     }
 }

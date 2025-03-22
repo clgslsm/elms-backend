@@ -101,6 +101,11 @@ public class AuthController {
     public ResponseEntity<?> getProfile() {
         // Get authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+
         String username = authentication.getName();
         
         User user = userRepository.findByUsername(username);
@@ -118,5 +123,14 @@ public class AuthController {
         );
         
         return ResponseEntity.ok(profile);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            SecurityContextHolder.clearContext();
+            jwtUtil.invalidateToken(token.replace("Bearer ", ""));
+        }
+        return ResponseEntity.ok("You have been logged out successfully.");
     }
 }
