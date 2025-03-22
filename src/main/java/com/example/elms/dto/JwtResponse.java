@@ -16,6 +16,8 @@ public class JwtResponse {
     @Schema(description = "Token type", example = "Bearer")
     private String type = "Bearer";
 
+    private Long idRole;
+
     private String message;
 
 }

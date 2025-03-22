@@ -1,12 +1,18 @@
 package com.example.elms.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "leave_request")
+@Getter
+@Setter
+@AllArgsConstructor
 public class LeaveRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +25,16 @@ public class LeaveRequest {
     private String content;
 
     @Column(nullable = false, name = "id_user_send")
-    private String idUserSend;
+    private Long idUserSend;
 
     @Column(nullable = false, name = "id_user_receive")
-    private String idUserReceive;
+    private Long idUserReceive;
+
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     @Column(nullable = false)
     private LocalDate leaveDate;
@@ -33,79 +45,5 @@ public class LeaveRequest {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getIdUserSend() {
-        return idUserSend;
-    }
-
-    public void setIdUserSend(String idUserSend) {
-        this.idUserSend = idUserSend;
-    }
-
-    public String getIdUserReceive() {
-        return idUserReceive;
-    }
-
-    public void setIdUserReceive(String idUserReceive) {
-        this.idUserReceive = idUserReceive;
-    }
-
-    public LocalDate getLeaveDate() {
-        return leaveDate;
-    }
-
-    public void setLeaveDate(LocalDate leaveDate) {
-        this.leaveDate = leaveDate;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

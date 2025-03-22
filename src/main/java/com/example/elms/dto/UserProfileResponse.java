@@ -35,6 +35,8 @@ public class UserProfileResponse {
     private User user;
 
     private String message;
+
+    private Long role;
     // Constructors, getters and setters
 //    public UserProfileResponse() {}
     

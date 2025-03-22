@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-
+    private final JwtUtil jwtUtil;
     @Operation(summary = "Register a new user", description = "Creates a new user account")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "User registered successfully"),
@@ -69,10 +69,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
         try{
+            User user = authService.login(loginRequest);
             return ResponseEntity.ok(
                 JwtResponse.builder()
                     .message("Login Successfully !!")
-                    .token(authService.login(loginRequest))
+                    .token(jwtUtil.generateToken(user.getUsername()))
+                    .idRole(user.getIdRole())
                     .build()
             );
         }catch (InvalidException e){
@@ -101,6 +103,7 @@ public class AuthController {
                 UserProfileResponse.builder()
                     .message("Get user successfully !!")
                     .user(authService.getProfile())
+                    .role(1L)
                     .build()
             );
         } catch (UserNotFound e){
@@ -110,6 +113,7 @@ public class AuthController {
                     UserProfileResponse.builder()
                         .message(e.getMessage())
                         .user(null)
+                        .role(0L)
                         .build()
                 );
         }

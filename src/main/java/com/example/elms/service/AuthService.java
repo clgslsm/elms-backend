@@ -26,7 +26,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     public User registerUser(SignupRequest signupRequest){
         // Check if username is already taken
@@ -44,14 +43,14 @@ public class AuthService {
             .username(signupRequest.getUsername())
             .email(signupRequest.getEmail())
             .fullName(signupRequest.getFullName())
-            .password(signupRequest.getPassword())
-            .role("USER")
+            .password(passwordEncoder.encode(signupRequest.getPassword()))
+            .idRole(1L)
             .build();
 
         return userRepository.save(user);
     }
 
-    public String login (LoginRequest loginRequest){
+    public User login (LoginRequest loginRequest){
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
@@ -61,7 +60,7 @@ public class AuthService {
         // Check if user exists and password matches
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             // Generate JWT token upon successful authentication
-            return jwtUtil.generateToken(username);
+            return user;
         } else {
             throw new InvalidException("Username or password wrong");
         }
@@ -81,7 +80,7 @@ public class AuthService {
             .username(user.getUsername())
             .email(user.getEmail())
             .fullName(user.getFullName())
-            .role(user.getRole())
+            .idRole(user.getIdRole())
             .build();
     }
 }
