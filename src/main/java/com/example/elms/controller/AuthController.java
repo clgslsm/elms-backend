@@ -118,4 +118,20 @@ public class AuthController {
                 );
         }
     }
+
+    @Operation(summary = "Logout", description = "Invalidates the user's token, requiring login to use the system again",
+            security = { @SecurityRequirement(name = "bearerAuth") })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.ok("Logout successful!");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is currently logged in.");
+    }
 }
