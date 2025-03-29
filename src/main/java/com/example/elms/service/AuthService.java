@@ -81,6 +81,7 @@ public class AuthService {
             .email(user.getEmail())
             .fullName(user.getFullName())
             .idRole(user.getIdRole())
+            .leaveDaysRemain(user.getLeaveDaysRemain())
             .build();
     }
 }
