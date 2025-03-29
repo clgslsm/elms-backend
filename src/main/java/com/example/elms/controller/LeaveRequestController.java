@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/leave-requests")
@@ -103,11 +104,11 @@ public class LeaveRequestController {
         return ResponseEntity.ok(leaveRequestService.getAttachmentsByLeaveRequestId(id));
     }
 
-    @Operation(summary = "Get leave requests for manager", description = "Returns all leave requests assigned to a manager",
+    @Operation(summary = "Get leave requests summary for manager", description = "Returns a summary of leave requests assigned to a manager",
             security = { @SecurityRequirement(name = "bearerAuth") })
     @GetMapping("/manager")
-    public ResponseEntity<List<LeaveRequest>> getLeaveRequestsForManager() {
-        List<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequestsForManager();
-        return ResponseEntity.ok(leaveRequests);
+    public ResponseEntity<Map<String, Object>> getLeaveRequestsSummaryForManager() {
+        Map<String, Object> summary = leaveRequestService.getLeaveRequestsSummaryForManager();
+        return ResponseEntity.ok(summary);
     }
 }
