@@ -16,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",  // React default
+        "http://localhost:3000",  // React default
             "http://localhost:4200",  // Angular default
             "http://localhost:8080",  // Vue default
             "http://localhost:5173", // Refine app
