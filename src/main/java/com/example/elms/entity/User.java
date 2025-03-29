@@ -2,6 +2,7 @@ package com.example.elms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Entity
@@ -31,4 +32,6 @@ public class User {
     
     @Column(nullable = false, name = "id_role")
     private Long idRole;
+
+    private Integer leaveDaysRemain = 12;
 }
