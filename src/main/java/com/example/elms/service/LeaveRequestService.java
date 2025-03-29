@@ -16,7 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,6 +80,7 @@ public class LeaveRequestService {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username);
+
         if (user == null) {
             throw new UserNotFound("User not found");
         }
@@ -177,6 +181,31 @@ public class LeaveRequestService {
     
     @Transactional
     public LeaveRequest approveLeaveRequest(Long requestId) {
+        LeaveRequest leaveRequest = leaveRequestRepository.findById(requestId)
+            .orElseThrow(() -> new RuntimeException("REQUEST NOT FOUND"));
+
+        User employee = userRepository.findById(leaveRequest.getIdUserSend())
+            .orElseThrow(() -> new RuntimeException("USER NOT FOUND"));
+
+        if (employee.getLeaveDaysRemain() <= 0) {
+            throw new RuntimeException("NO DAYS REMAINING");
+        }
+
+        // ✅ Directly use LocalDate (No need to parse)
+        LocalDate startDate = leaveRequest.getStartDate();
+        LocalDate endDate = leaveRequest.getEndDate();
+
+        // ✅ Correct way to calculate leave days
+        int leaveDays = endDate.getDayOfMonth() - startDate.getDayOfMonth() ; // Include last day
+
+        if (leaveDays > employee.getLeaveDaysRemain()) {
+            throw new RuntimeException("YOU DON'T HAVE ENOUGH LEAVE DAYS");
+        }
+
+        // ✅ Deduct leave days
+        employee.setLeaveDaysRemain(employee.getLeaveDaysRemain() - (int) leaveDays);
+        userRepository.save(employee);
+
         return updateLeaveRequestStatus(requestId, "APPROVED");
     }
     

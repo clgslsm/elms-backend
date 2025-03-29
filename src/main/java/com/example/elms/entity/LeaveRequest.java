@@ -23,7 +23,7 @@ public class LeaveRequest {
     
     @Column(name = "id_user_receive")
     private Long idUserReceive;
-    
+
     @Column(name = "start_date")
     private LocalDate startDate;
     

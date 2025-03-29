@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -23,7 +25,7 @@ public class User {
     
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false, unique = true)
     private String email;
     
