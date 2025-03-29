@@ -16,6 +16,13 @@ import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 
     @Value("${jwt.secret}")
     private String secret;
@@ -78,5 +85,13 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Long getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(Long expiration) {
+        this.expiration = expiration;
     }
 }
