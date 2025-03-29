@@ -19,7 +19,7 @@ public class CorsConfig {
             "http://localhost:3000",  // React default
             "http://localhost:4200",  // Angular default
             "http://localhost:8080",  // Vue default
-                "http://localhost:5173", // Refine app
+            "http://localhost:5173", // Refine app
             "http://your-production-domain.com"  // Add your production URL
         ));
         corsConfiguration.setAllowedHeaders(Arrays.asList(
