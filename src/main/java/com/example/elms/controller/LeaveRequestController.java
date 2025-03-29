@@ -102,4 +102,12 @@ public class LeaveRequestController {
     public ResponseEntity<List<Attachment>> getAttachments(@PathVariable Long id) {
         return ResponseEntity.ok(leaveRequestService.getAttachmentsByLeaveRequestId(id));
     }
+
+    @Operation(summary = "Get leave requests for manager", description = "Returns all leave requests assigned to a manager",
+            security = { @SecurityRequirement(name = "bearerAuth") })
+    @GetMapping("/manager")
+    public ResponseEntity<List<LeaveRequest>> getLeaveRequestsForManager() {
+        List<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequestsForManager();
+        return ResponseEntity.ok(leaveRequests);
+    }
 }

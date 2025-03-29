@@ -236,6 +236,21 @@ public class LeaveRequestService {
         // If no exception was thrown, user has permission to view attachments
         return attachmentRepository.findAllByLeaveRequestId(leaveRequestId);
     }
-    
-    // Other methods remain unchanged
+    public List<LeaveRequest> getLeaveRequestsForManager() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFound("User not found");
+        }
+
+        // Only managers can access this endpoint
+        if (user.getIdRole().intValue() != MANAGER) {
+            throw new UnauthorizedAccessException("Only managers can access this resource");
+        }
+
+        // Fetch all leave requests sent to this manager
+        return leaveRequestRepository.findAllByIdUserReceive(user.getId());
+    }
 }
