@@ -102,5 +102,3 @@ This project is licensed under the Apache License 2.0. See the `LICENSE` file fo
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
-## Contact
-For any inquiries, please contact [your-email@example.com].
