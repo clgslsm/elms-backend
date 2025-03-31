@@ -52,10 +52,10 @@ cd elms-backend
 ### Configure Environment Variables
 Create a `.env` file in the root directory with the following variables:
 ```env
-DB_URL=jdbc:mysql://<your-database-url>:3306/elms
-DB_USERNAME=<your-database-username>
-DB_PASSWORD=<your-database-password>
-JWT_SECRET=<your-jwt-secret>
+DB_URL=jdbc:mysql://<database-url>:3306/elms
+DB_USERNAME=<database-username>
+DB_PASSWORD=<database-password>
+JWT_SECRET=<jwt-secret>
 JWT_EXPIRATION=3600000
 SHOW_SQL=false
 PORT=8080
